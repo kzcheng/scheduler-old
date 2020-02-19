@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import classnames from "classnames";
 import "components/Appointment/styles.scss";
