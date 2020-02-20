@@ -17,7 +17,9 @@
     "ecmaVersion": 2018
   },
   "rules": {
-    // personal rules
+    //
+    // [personal rules]
+    //
     "no-empty": "warn",
     "func-style": [
       "warn",
@@ -30,7 +32,10 @@
       "never"
     ],
     "no-undef": "warn",
-    // lighthouse rules
+    "no-unused-vars": "off",
+    //
+    // [lighthouse rules]
+    //
     "indent": [
       "error",
       2
@@ -45,7 +50,6 @@
     ],
     "no-var": "error",
     "no-console": "off",
-    "no-unused-vars": "warn",
     "func-call-spacing": [
       "error",
       "never"
