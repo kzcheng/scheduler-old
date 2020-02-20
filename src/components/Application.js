@@ -74,7 +74,11 @@ export default function Application(props) {
     );
   });
 
-  console.log(state);
+  const setDay = day => setState({ ...state, day });
+  const setDays = days => setState({ ...state, days });
+  const setAppointments = appointments => setState({ ...state, appointments });
+
+  // console.log(state);
 
   return (
     <main className="layout">
@@ -89,12 +93,7 @@ export default function Application(props) {
           <DayList
             days={state.days}
             day={state.day}
-            setDay={(data) => {
-              setState({
-                ...state,
-                day: data,
-              });
-            }}
+            setDay={setDay}
           />
         </nav>
         <img
