@@ -7,6 +7,7 @@ import Appointment from "components/Appointment";
 
 
 export default function Application(props) {
+  
   const [state, setState] = useState({
     day: "Monday",
     days: [],
@@ -56,16 +57,19 @@ export default function Application(props) {
     ],
   });
 
+  const setDay = day => setState({ ...state, day });
+  const setDays = days => setState({ ...state, days });
+  const setAppointments = appointments => setState({ ...state, appointments });
+  
+
   // This is used to get data from the API.
   // This is a side effect.
   useEffect(() => {
-    axios.get("/api/days").then(response => {
-      setState({
-        ...state,
-        days: response.data,
-      });
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    axios.get("/api/days").then(response =>
+      setState(prev =>
+        ({ ...prev, days: response.data })
+      )
+    );
   }, []); // This empty array will make this useEffect only happen once.
 
   const appointmentsComponent = state.appointments.map(appointment => {
@@ -73,10 +77,6 @@ export default function Application(props) {
       <Appointment key={appointment.id} {...appointment} />
     );
   });
-
-  const setDay = day => setState({ ...state, day });
-  const setDays = days => setState({ ...state, days });
-  const setAppointments = appointments => setState({ ...state, appointments });
 
   // console.log(state);
 
