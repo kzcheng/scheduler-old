@@ -5,69 +5,76 @@ import "components/Application.scss";
 import DayList from "components/DayList";
 import Appointment from "components/Appointment";
 
-const appointments = [
-  {id: 1,
-    time: "11am",
-  },
-  {id: 2,
-    time: "12pm",
-    interview: {
-      student: "Lydia Miller-Jones",
-      interviewer: {
-        id: 1,
-        name: "Sylvia Palmer",
-        avatar: "https://i.imgur.com/LpaY82x.png",
-      },
-    },
-  },
-  {id: 3,
-    time: "1pm",
-  },
-  {id: 4,
-    time: "2pm",
-    interview: {
-      student: "Lydia Miller-Jones",
-      interviewer: {
-        id: 3,
-        name: "Sylvia Palmer",
-        avatar: "https://i.imgur.com/LpaY82x.png",
-      },
-    },
-  },
-  {id: 5,
-    time: "3pm",
-    interview: {
-      student: "Lydia Miller-Jones",
-      interviewer: {
-        id: 2,
-        name: "Sylvia Palmer",
-        avatar: "https://i.imgur.com/LpaY82x.png",
-      },
-    },
-  },
-  {id: "last",
-    time: "4pm",
-  },
-];
-
 
 export default function Application(props) {
-  const [day, setDay] = useState("Monday");
-  const [days, setDays] = useState([]);
+  const [state, setState] = useState({
+    day: "Monday",
+    days: [],
+    appointments: [
+      {id: 1,
+        time: "11am",
+      },
+      {id: 2,
+        time: "12pm",
+        interview: {
+          student: "Lydia Miller-Jones",
+          interviewer: {
+            id: 1,
+            name: "Sylvia Palmer",
+            avatar: "https://i.imgur.com/LpaY82x.png",
+          },
+        },
+      },
+      {id: 3,
+        time: "1pm",
+      },
+      {id: 4,
+        time: "2pm",
+        interview: {
+          student: "Lydia Miller-Jones",
+          interviewer: {
+            id: 3,
+            name: "Sylvia Palmer",
+            avatar: "https://i.imgur.com/LpaY82x.png",
+          },
+        },
+      },
+      {id: 5,
+        time: "3pm",
+        interview: {
+          student: "Lydia Miller-Jones",
+          interviewer: {
+            id: 2,
+            name: "Sylvia Palmer",
+            avatar: "https://i.imgur.com/LpaY82x.png",
+          },
+        },
+      },
+      {id: "last",
+        time: "4pm",
+      },
+    ],
+  });
 
   // This is used to get data from the API.
   // This is a side effect.
   useEffect(() => {
     axios.get("/api/days").then(response => {
-      setDays(response.data);
+      setState({
+        ...state,
+        days: response.data,
+      });
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // This empty array will make this useEffect only happen once.
 
-  const appointmentsComponent = appointments.map(appointment => {
+  const appointmentsComponent = state.appointments.map(appointment => {
     return (
       <Appointment key={appointment.id} {...appointment} />
     );
   });
+
+  console.log(state);
 
   return (
     <main className="layout">
@@ -80,9 +87,14 @@ export default function Application(props) {
         <hr className="sidebar__separator sidebar--centered" />
         <nav className="sidebar__menu">
           <DayList
-            days={days}
-            day={day}
-            setDay={setDay}
+            days={state.days}
+            day={state.day}
+            setDay={(data) => {
+              setState({
+                ...state,
+                day: data,
+              });
+            }}
           />
         </nav>
         <img
