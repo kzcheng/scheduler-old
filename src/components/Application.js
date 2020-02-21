@@ -4,7 +4,7 @@ import axios from 'axios';
 import "components/Application.scss";
 import DayList from "components/DayList";
 import Appointment from "components/Appointment";
-import { getAppointmentsForDay } from "helpers/selectors";
+import { getAppointmentsForDay, getInterview } from "helpers/selectors";
 
 
 export default function Application(props) {
@@ -25,8 +25,6 @@ export default function Application(props) {
   });
 
   const setDay = day => setState({ ...state, day });
-  const setDays = days => setState({ ...state, days });
-  const setAppointments = appointments => setState({ ...state, appointments });
 
   // This is used to get data from the API.
   // This is a side effect.
@@ -50,8 +48,15 @@ export default function Application(props) {
 
 
   const appointmentsComponent = getAppointmentsForDay(state, state.day).map(appointment => {
+    const interview = getInterview(state, appointment.interview);
+
     return (
-      <Appointment key={appointment.id} {...appointment} />
+      <Appointment
+        key={appointment.id}
+        id={appointment.id}
+        time={appointment.time}
+        interview={interview}
+      />
     );
   });
 

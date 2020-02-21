@@ -8,5 +8,21 @@ module.exports = {
       }
     }
     return appointmentsForDay;
+  },
+
+  getInterview: (state, interview) => {
+    if (!interview) {
+      return interview;
+    }
+
+    const interviewerID = interview.interviewer;
+    return  {
+      ...interview,
+      interviewer: {
+        id: interviewerID,
+        name: state.interviewers[interviewerID].name,
+        avatar: state.interviewers[interviewerID].avatar,
+      }
+    };
   }
 };
