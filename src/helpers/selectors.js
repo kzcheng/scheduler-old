@@ -1,7 +1,7 @@
 const getAppointmentsForDay = (state, dayName) => {
   const days = state.days;
   let appointmentsForDay = [];
-  // console.log(state.appointments);
+  console.log(state);
   for (let i = 0; i < days.length; i++) {
     if (days[i].name === dayName) {
       console.log(days[i]);
@@ -10,8 +10,5 @@ const getAppointmentsForDay = (state, dayName) => {
   }
   return appointmentsForDay;
 };
-
-// day: { id: 2, name: 'Tuesday', appointments: [ 4, 5 ] }
-// appointment: {}
 
 export { getAppointmentsForDay };

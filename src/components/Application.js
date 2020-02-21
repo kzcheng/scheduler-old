@@ -4,9 +4,18 @@ import axios from 'axios';
 import "components/Application.scss";
 import DayList from "components/DayList";
 import Appointment from "components/Appointment";
+import { getAppointmentsForDay } from "helpers/selectors";
 
 
 export default function Application(props) {
+
+  // Promise.all([
+  //   Promise.resolve("first"),
+  //   Promise.resolve("second"),
+  //   Promise.resolve("third"),
+  // ]).then((all) => {
+  //   setState(prev => ({ first: all[0], second: all[1], third: all[2] }));
+  // });
   
   const [state, setState] = useState({
     day: "Monday",
@@ -61,18 +70,28 @@ export default function Application(props) {
   const setDays = days => setState({ ...state, days });
   const setAppointments = appointments => setState({ ...state, appointments });
   
+  const getDays = axios.get("/api/days").then(res =>
+    Promise.resolve(res.data)
+  );
+  const getAppointments = axios.get("/api/appointments").then(res =>
+    Promise.resolve(res.data)
+  );
 
   // This is used to get data from the API.
   // This is a side effect.
   useEffect(() => {
-    axios.get("/api/days").then(response =>
-      setState(prev =>
-        ({ ...prev, days: response.data })
-      )
+    Promise.all([
+      getDays,
+      getAppointments,
+    ]).then((res) => {
+      return setState(prev =>{
+        return { ...prev, days: res[0], appointments: res[1]};
+      });
+    }
     );
-  }, []); // This empty array will make this useEffect only happen once.
+  }, [getAppointments, getDays]); // This empty array will make this useEffect only happen once.
 
-  const appointmentsComponent = state.appointments.map(appointment => {
+  const appointmentsComponent = getAppointmentsForDay(state, state.day).map(appointment => {
     return (
       <Appointment key={appointment.id} {...appointment} />
     );
