@@ -1,15 +1,4 @@
 module.exports = {
-  getAppointmentsForDay: (state, dayName) => {
-    const days = state.days;
-    let appointmentsForDay = [];
-    for (let i = 0; i < days.length; i++) {
-      if (days[i].name === dayName) {
-        appointmentsForDay = days[i].appointments.map(id => state.appointments[id]);
-      }
-    }
-    return appointmentsForDay;
-  },
-
   getInterview: (state, interview) => {
     if (!interview) {
       return interview;
@@ -24,5 +13,27 @@ module.exports = {
         avatar: state.interviewers[interviewerID].avatar,
       }
     };
-  }
+  },
+
+  getAppointmentsForDay: (state, dayName) => {
+    const days = state.days;
+    let appointmentsForDay = [];
+    for (let i = 0; i < days.length; i++) {
+      if (days[i].name === dayName) {
+        appointmentsForDay = days[i].appointments.map(id => state.appointments[id]);
+      }
+    }
+    return appointmentsForDay;
+  },
+
+  getInterviewersForDay: (state, dayName) => {
+    const days = state.days;
+    let InterviewersForDay = [];
+    for (let i = 0; i < days.length; i++) {
+      if (days[i].name === dayName) {
+        InterviewersForDay = days[i].interviewers.map(id => state.interviewers[id]);
+      }
+    }
+    return InterviewersForDay;
+  },
 };
