@@ -8,14 +8,6 @@ import { getAppointmentsForDay, getInterview } from "helpers/selectors";
 
 
 export default function Application(props) {
-
-  // Promise.all([
-  //   Promise.resolve("first"),
-  //   Promise.resolve("second"),
-  //   Promise.resolve("third"),
-  // ]).then((all) => {
-  //   setState(prev => ({ first: all[0], second: all[1], third: all[2] }));
-  // });
   
   const [state, setState] = useState({
     day: "Monday",
@@ -26,8 +18,6 @@ export default function Application(props) {
 
   const setDay = day => setState({ ...state, day });
 
-  // This is used to get data from the API.
-  // This is a side effect.
   useEffect(() => {
     Promise.all([
       axios.get("/api/days"),
@@ -43,13 +33,10 @@ export default function Application(props) {
         };
       });
     });
-  }, []); // This empty array will make this useEffect only happen once.
-
-
+  }, []);
 
   const appointmentsComponent = getAppointmentsForDay(state, state.day).map(appointment => {
     const interview = getInterview(state, appointment.interview);
-
     return (
       <Appointment
         key={appointment.id}
