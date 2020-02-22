@@ -6,6 +6,16 @@ export default function useApplicationData(initial) {
   const SET_DAY = "SET_DAY";
   const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
   const SET_INTERVIEW = "SET_INTERVIEW";
+  const SET_DAYS_SPOTS_INCREASE = "SET_DAYS_SPOTS_INCREASE";
+  const SET_DAYS_SPOTS_DECREASE = "SET_DAYS_SPOTS_DECREASE";
+
+  const getDayIDFromName = (days, dayName) => {
+    for (let i = 0; i < days.length; i++) {
+      if (days[i].name === dayName) {
+        return i;
+      }
+    }
+  };
 
   const reducer = (state, action) => {
     switch (action.type) {
@@ -36,6 +46,34 @@ export default function useApplicationData(initial) {
             }
           },
         },
+      };
+    }
+
+    case SET_DAYS_SPOTS_INCREASE: {
+      const dayID = getDayIDFromName(state.days, state.day);
+      return {
+        ...state,
+        days:{
+          ...state.days,
+          [dayID]: {
+            ...state.days[dayID],
+            spots: state.days[dayID].spots + 1,
+          },
+        }
+      };
+    }
+
+    case SET_DAYS_SPOTS_DECREASE: {
+      const dayID = getDayIDFromName(state.days, state.day);
+      return {
+        ...state,
+        days:{
+          ...state.days,
+          [dayID]: {
+            ...state.days[dayID],
+            spots: state.days[dayID].spots - 1,
+          },
+        }
       };
     }
 

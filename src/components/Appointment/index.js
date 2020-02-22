@@ -13,8 +13,6 @@ import Confirm from "components/Appointment/Confirm";
 import Error from "components/Appointment/Error";
 
 export default function Appointment(props) {
-  console.log(props);
-
   const EMPTY = "EMPTY";
   const SHOW = "SHOW";
   const CREATE = "CREATE";
