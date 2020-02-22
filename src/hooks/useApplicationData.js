@@ -6,8 +6,7 @@ export default function useApplicationData(initial) {
   const SET_DAY = "SET_DAY";
   const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
   const SET_INTERVIEW = "SET_INTERVIEW";
-  const SET_DAYS_SPOTS_INCREASE = "SET_DAYS_SPOTS_INCREASE";
-  const SET_DAYS_SPOTS_DECREASE = "SET_DAYS_SPOTS_DECREASE";
+  const DECREASE_DAYS_SPOTS = "DECREASE_DAYS_SPOTS";
 
   const getDayIDFromName = (days, dayName) => {
     for (let i = 0; i < days.length; i++) {
@@ -35,6 +34,17 @@ export default function useApplicationData(initial) {
       };
 
     case SET_INTERVIEW: {
+      const dayID = getDayIDFromName(state.days, state.day);
+      const dayObj = {
+        ...state.days[dayID],
+        spots: state.days[dayID].spots - 1,
+      };
+      console.log("dayObj in SET_INTERVIEW");
+      console.log(dayObj);
+
+      const daysArray = [...state.days];
+      daysArray[dayID] = dayObj;
+
       return {
         ...state,
         appointments: {
@@ -46,34 +56,23 @@ export default function useApplicationData(initial) {
             }
           },
         },
+        days: daysArray,
       };
     }
 
-    case SET_DAYS_SPOTS_INCREASE: {
+    case DECREASE_DAYS_SPOTS: {
       const dayID = getDayIDFromName(state.days, state.day);
-      return {
-        ...state,
-        days:{
-          ...state.days,
-          [dayID]: {
-            ...state.days[dayID],
-            spots: state.days[dayID].spots + 1,
-          },
-        }
+      const dayObj = {
+        ...state.days[dayID],
+        spots: state.days[dayID].spots + 1,
       };
-    }
 
-    case SET_DAYS_SPOTS_DECREASE: {
-      const dayID = getDayIDFromName(state.days, state.day);
+      const daysArray = [...state.days];
+      daysArray[dayID] = dayObj;
+
       return {
         ...state,
-        days:{
-          ...state.days,
-          [dayID]: {
-            ...state.days[dayID],
-            spots: state.days[dayID].spots - 1,
-          },
-        }
+        days: daysArray,
       };
     }
 
@@ -105,7 +104,6 @@ export default function useApplicationData(initial) {
       });
     });
   }, []);
- 
 
   return {
     state,
@@ -127,6 +125,8 @@ export default function useApplicationData(initial) {
         );
     },
 
-    cancelInterview: (id) => axios.delete(`/api/appointments/${id}`),
+    cancelInterview: (id) => axios
+      .delete(`/api/appointments/${id}`)
+      .then(dispatch({ type: DECREASE_DAYS_SPOTS })),
   };
 }
