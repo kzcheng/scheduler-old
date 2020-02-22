@@ -9,11 +9,13 @@ export default function useApplicationData(initial) {
 
   const reducer = (state, action) => {
     switch (action.type) {
+
     case SET_DAY:
       return {
         ...state,
         day: action.day
       };
+      
     case SET_APPLICATION_DATA:
       return {
         ...state,
@@ -21,6 +23,7 @@ export default function useApplicationData(initial) {
         appointments: action.appointments || state.appointments,
         interviewers: action.interviewers || state.interviewers,
       };
+
     case SET_INTERVIEW: {
       return {
         ...state,
@@ -35,6 +38,7 @@ export default function useApplicationData(initial) {
         },
       };
     }
+
     default:
       throw new Error(
         `Tried to reduce with unsupported action type: ${action.type}`
@@ -48,27 +52,6 @@ export default function useApplicationData(initial) {
     appointments: [],
     interviewers: [],
   });
-
-  const setDay = day => dispatch({ type: SET_DAY, day });
-
-  const bookInterview = function(id, interview) {
-    const appointment = {
-      ...state.appointments[id],
-      interview: { ...interview }
-    };
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment
-    };
-    return axios.put(`/api/appointments/${id}`, appointment)
-      .then(
-        dispatch({ type: SET_INTERVIEW, id, interview })
-      );
-  };
-
-  const cancelInterview = function(id) {
-    return axios.delete(`/api/appointments/${id}`);
-  };
 
   useEffect(() => {
     Promise.all([
@@ -84,11 +67,28 @@ export default function useApplicationData(initial) {
       });
     });
   }, []);
+ 
 
   return {
     state,
-    setDay,
-    bookInterview,
-    cancelInterview
+
+    setDay: day => dispatch({ type: SET_DAY, day }),
+
+    bookInterview: (id, interview) => {
+      const appointment = {
+        ...state.appointments[id],
+        interview: { ...interview }
+      };
+      const appointments = {
+        ...state.appointments,
+        [id]: appointment
+      };
+      return axios.put(`/api/appointments/${id}`, appointment)
+        .then(
+          dispatch({ type: SET_INTERVIEW, id, interview })
+        );
+    },
+
+    cancelInterview: (id) => axios.delete(`/api/appointments/${id}`),
   };
 }
