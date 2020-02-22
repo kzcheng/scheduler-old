@@ -118,7 +118,9 @@ export default function Appointment(props) {
       {mode === ERROR_DELETE && (
         <Error
           message={"Error Deleting"}
-          onClose={back}
+          onClose={()=> {
+            transition(SHOW);
+          }}
         />)}
     </article>
   );
