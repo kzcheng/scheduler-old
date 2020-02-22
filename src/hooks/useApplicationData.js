@@ -1,16 +1,55 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import axios from 'axios';
 
 export default function useApplicationData(initial) {
 
-  const [state, setState] = useState({
+  const SET_DAY = "SET_DAY";
+  const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
+  const SET_INTERVIEW = "SET_INTERVIEW";
+
+  const reducer = (state, action) => {
+    switch (action.type) {
+    case SET_DAY:
+      return {
+        ...state,
+        day: action.day
+      };
+    case SET_APPLICATION_DATA:
+      return {
+        ...state,
+        days: action.days || state.days,
+        appointments: action.appointments || state.appointments,
+        interviewers: action.interviewers || state.interviewers,
+      };
+    case SET_INTERVIEW: {
+      return {
+        ...state,
+        appointments: {
+          ...state.appointments,
+          [action.id]: {
+            ...state.appointments[action.id],
+            interview: {
+              ...action.interview
+            }
+          },
+        },
+      };
+    }
+    default:
+      throw new Error(
+        `Tried to reduce with unsupported action type: ${action.type}`
+      );
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, {
     day: "Monday",
     days: [],
     appointments: [],
     interviewers: [],
   });
 
-  const setDay = day => setState({ ...state, day });
+  const setDay = day => dispatch({ type: SET_DAY, day });
 
   const bookInterview = function(id, interview) {
     const appointment = {
@@ -23,7 +62,7 @@ export default function useApplicationData(initial) {
     };
     return axios.put(`/api/appointments/${id}`, appointment)
       .then(
-        setState({...state, appointments})
+        dispatch({ type: SET_INTERVIEW, id, interview })
       );
   };
 
@@ -37,13 +76,11 @@ export default function useApplicationData(initial) {
       axios.get("/api/appointments"),
       axios.get("/api/interviewers"),
     ]).then((res) => {
-      setState(prev =>{
-        return {
-          ...prev,
-          days: res[0].data,
-          appointments: res[1].data,
-          interviewers: res[2].data,
-        };
+      dispatch({
+        type: SET_APPLICATION_DATA,
+        days: res[0].data,
+        appointments: res[1].data,
+        interviewers: res[2].data,
       });
     });
   }, []);
