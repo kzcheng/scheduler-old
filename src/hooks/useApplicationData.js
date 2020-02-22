@@ -53,19 +53,6 @@ export default function useApplicationData(initial) {
     interviewers: [],
   });
 
-  const getData = Promise.all([
-    axios.get("/api/days"),
-    axios.get("/api/appointments"),
-    axios.get("/api/interviewers"),
-  ]).then((res) => {
-    dispatch({
-      type: SET_APPLICATION_DATA,
-      days: res[0].data,
-      appointments: res[1].data,
-      interviewers: res[2].data,
-    });
-  });
-
   useEffect(() => {
     Promise.all([
       axios.get("/api/days"),
@@ -84,8 +71,6 @@ export default function useApplicationData(initial) {
 
   return {
     state,
-    
-    getData,
 
     setDay: day => dispatch({ type: SET_DAY, day }),
 
@@ -101,11 +86,9 @@ export default function useApplicationData(initial) {
       return axios.put(`/api/appointments/${id}`, appointment)
         .then(
           dispatch({ type: SET_INTERVIEW, id, interview })
-        ).then(
-          getData
         );
     },
 
-    cancelInterview: (id) => axios.delete(`/api/appointments/${id}`).then(getData),
+    cancelInterview: (id) => axios.delete(`/api/appointments/${id}`),
   };
 }
