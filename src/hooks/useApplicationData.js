@@ -39,8 +39,6 @@ export default function useApplicationData(initial) {
         ...state.days[dayID],
         spots: state.days[dayID].spots - 1,
       };
-      console.log("dayObj in SET_INTERVIEW");
-      console.log(dayObj);
 
       const daysArray = [...state.days];
       daysArray[dayID] = dayObj;
