@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
 
 import "components/Application.scss";
 import DayList from "components/DayList";
@@ -9,13 +8,15 @@ import { getInterview, getAppointmentsForDay, getInterviewersForDay } from "help
 
 
 export default function Application(props) {
-
   const {
     state,
     setDay,
     bookInterview,
     cancelInterview,
   } = useApplicationData();
+
+  console.log("Current State:");
+  console.log(state);
 
   const interviewers = getInterviewersForDay(state, state.day);
 
@@ -61,3 +62,4 @@ export default function Application(props) {
     </main>
   );
 }
+

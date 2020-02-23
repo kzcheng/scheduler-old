@@ -1,20 +1,17 @@
-import React, { useState, useEffect, useReducer } from "react";
-import axios from 'axios';
+// Important Packages
+import { useEffect, useReducer } from "react";
+import axios from "axios";
+
+// Helper Functions
+import {getDayIDFromName} from "helpers/selectors";
+
+// Constants
+const SET_DAY = "SET_DAY";
+const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
+const SET_INTERVIEW = "SET_INTERVIEW";
+const DECREASE_DAYS_SPOTS = "DECREASE_DAYS_SPOTS";
 
 export default function useApplicationData(initial) {
-
-  const SET_DAY = "SET_DAY";
-  const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
-  const SET_INTERVIEW = "SET_INTERVIEW";
-  const DECREASE_DAYS_SPOTS = "DECREASE_DAYS_SPOTS";
-
-  const getDayIDFromName = (days, dayName) => {
-    for (let i = 0; i < days.length; i++) {
-      if (days[i].name === dayName) {
-        return i;
-      }
-    }
-  };
 
   const reducer = (state, action) => {
     switch (action.type) {
@@ -34,7 +31,7 @@ export default function useApplicationData(initial) {
       };
 
     case SET_INTERVIEW: {
-      const dayID = getDayIDFromName(state.days, state.day);
+      const dayID = getDayIDFromName(state, state.day);
       const dayObj = {
         ...state.days[dayID],
         spots: state.days[dayID].spots - 1,
@@ -59,7 +56,7 @@ export default function useApplicationData(initial) {
     }
 
     case DECREASE_DAYS_SPOTS: {
-      const dayID = getDayIDFromName(state.days, state.day);
+      const dayID = getDayIDFromName(state, state.day);
       const dayObj = {
         ...state.days[dayID],
         spots: state.days[dayID].spots + 1,
