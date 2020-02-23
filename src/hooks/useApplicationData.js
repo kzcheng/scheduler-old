@@ -1,86 +1,92 @@
-import React, { useState, useEffect, useReducer } from "react";
-import axios from 'axios';
+// Important Packages
+import { useEffect, useReducer } from "react";
+import axios from "axios";
+
+// Helper Functions
+import {getDayIDFromName} from "helpers/selectors";
+
+// Constants
+const SET_DAY = "SET_DAY";
+const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
+const SET_INTERVIEW = "SET_INTERVIEW";
+const INCREASE_DAYS_SPOTS = "INCREASE_DAYS_SPOTS";
+const DECREASE_DAYS_SPOTS = "DECREASE_DAYS_SPOTS";
 
 export default function useApplicationData(initial) {
 
-  const SET_DAY = "SET_DAY";
-  const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
-  const SET_INTERVIEW = "SET_INTERVIEW";
-  const DECREASE_DAYS_SPOTS = "DECREASE_DAYS_SPOTS";
-
-  const getDayIDFromName = (days, dayName) => {
-    for (let i = 0; i < days.length; i++) {
-      if (days[i].name === dayName) {
-        return i;
-      }
-    }
-  };
-
   const reducer = (state, action) => {
-    switch (action.type) {
+    const actions = {
+      SET_DAY: () => {
+        return {
+          ...state,
+          day: action.day
+        };
+      },
 
-    case SET_DAY:
-      return {
-        ...state,
-        day: action.day
-      };
-      
-    case SET_APPLICATION_DATA:
-      return {
-        ...state,
-        days: action.days || state.days,
-        appointments: action.appointments || state.appointments,
-        interviewers: action.interviewers || state.interviewers,
-      };
+      SET_APPLICATION_DATA: () => {
+        return {
+          ...state,
+          days: action.days || state.days,
+          appointments: action.appointments || state.appointments,
+          interviewers: action.interviewers || state.interviewers,
+        };
+      },
 
-    case SET_INTERVIEW: {
-      const dayID = getDayIDFromName(state.days, state.day);
-      const dayObj = {
-        ...state.days[dayID],
-        spots: state.days[dayID].spots - 1,
-      };
-      console.log("dayObj in SET_INTERVIEW");
-      console.log(dayObj);
+      SET_INTERVIEW: () => {
+        return {
+          ...state,
+          appointments: {
+            ...state.appointments,
+            [action.id]: {
+              ...state.appointments[action.id],
+              interview: {
+                ...action.interview
+              }
+            },
+          }
+        };
+      },
 
-      const daysArray = [...state.days];
-      daysArray[dayID] = dayObj;
+      INCREASE_DAYS_SPOTS: () => {
+        const dayID = getDayIDFromName(state, state.day);
+        const dayObj = {
+          ...state.days[dayID],
+          spots: state.days[dayID].spots + 1,
+        };
+  
+        const daysArray = [...state.days];
+        daysArray[dayID] = dayObj;
+  
+        return {
+          ...state,
+          days: daysArray,
+        };
+      },
 
-      return {
-        ...state,
-        appointments: {
-          ...state.appointments,
-          [action.id]: {
-            ...state.appointments[action.id],
-            interview: {
-              ...action.interview
-            }
-          },
-        },
-        days: daysArray,
-      };
-    }
+      DECREASE_DAYS_SPOTS: () => {
+        const dayID = getDayIDFromName(state, state.day);
+        const dayObj = {
+          ...state.days[dayID],
+          spots: state.days[dayID].spots - 1,
+        };
+  
+        const daysArray = [...state.days];
+        daysArray[dayID] = dayObj;
+  
+        return {
+          ...state,
+          days: daysArray,
+        };
+      },
 
-    case DECREASE_DAYS_SPOTS: {
-      const dayID = getDayIDFromName(state.days, state.day);
-      const dayObj = {
-        ...state.days[dayID],
-        spots: state.days[dayID].spots + 1,
-      };
+      default:() => {
+        throw new Error(
+          `Tried to reduce with unsupported action type: ${action.type}`
+        );
+      },
+    };
 
-      const daysArray = [...state.days];
-      daysArray[dayID] = dayObj;
-
-      return {
-        ...state,
-        days: daysArray,
-      };
-    }
-
-    default:
-      throw new Error(
-        `Tried to reduce with unsupported action type: ${action.type}`
-      );
-    }
+    return actions[action.type]() || actions.default();
   };
 
   const [state, dispatch] = useReducer(reducer, {
@@ -115,18 +121,14 @@ export default function useApplicationData(initial) {
         ...state.appointments[id],
         interview: { ...interview }
       };
-      const appointments = {
-        ...state.appointments,
-        [id]: appointment
-      };
       return axios.put(`/api/appointments/${id}`, appointment)
         .then(
           dispatch({ type: SET_INTERVIEW, id, interview })
-        );
+        ).then(dispatch({ type: DECREASE_DAYS_SPOTS }));
     },
 
     cancelInterview: (id) => axios
       .delete(`/api/appointments/${id}`)
-      .then(dispatch({ type: DECREASE_DAYS_SPOTS })),
+      .then(dispatch({ type: INCREASE_DAYS_SPOTS })),
   };
 }

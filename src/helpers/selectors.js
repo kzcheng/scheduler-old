@@ -1,4 +1,12 @@
 module.exports = {
+  getDayIDFromName: (state, dayName) => {
+    for (let i = 0; i < state.days.length; i++) {
+      if (state.days[i].name === dayName) {
+        return i;
+      }
+    }
+  },
+
   getInterview: (state, interview) => {
     if (!interview) {
       return interview;
@@ -14,6 +22,17 @@ module.exports = {
       }
     };
   },
+  
+  getInterviewersForDay: (state, dayName) => {
+    const days = state.days;
+    let InterviewersForDay = [];
+    for (let i = 0; i < days.length; i++) {
+      if (days[i].name === dayName) {
+        InterviewersForDay = days[i].interviewers.map(id => state.interviewers[id]);
+      }
+    }
+    return InterviewersForDay;
+  },
 
   getAppointmentsForDay: (state, dayName) => {
     const days = state.days;
@@ -24,16 +43,5 @@ module.exports = {
       }
     }
     return appointmentsForDay;
-  },
-
-  getInterviewersForDay: (state, dayName) => {
-    const days = state.days;
-    let InterviewersForDay = [];
-    for (let i = 0; i < days.length; i++) {
-      if (days[i].name === dayName) {
-        InterviewersForDay = days[i].interviewers.map(id => state.interviewers[id]);
-      }
-    }
-    return InterviewersForDay;
   },
 };
