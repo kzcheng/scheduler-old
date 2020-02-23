@@ -15,74 +15,78 @@ const DECREASE_DAYS_SPOTS = "DECREASE_DAYS_SPOTS";
 export default function useApplicationData(initial) {
 
   const reducer = (state, action) => {
-    switch (action.type) {
+    const actions = {
+      SET_DAY: () => {
+        return {
+          ...state,
+          day: action.day
+        };
+      },
 
-    case SET_DAY:
-      return {
-        ...state,
-        day: action.day
-      };
-      
-    case SET_APPLICATION_DATA:
-      return {
-        ...state,
-        days: action.days || state.days,
-        appointments: action.appointments || state.appointments,
-        interviewers: action.interviewers || state.interviewers,
-      };
+      SET_APPLICATION_DATA: () => {
+        return {
+          ...state,
+          days: action.days || state.days,
+          appointments: action.appointments || state.appointments,
+          interviewers: action.interviewers || state.interviewers,
+        };
+      },
 
-    case SET_INTERVIEW: {
-      return {
-        ...state,
-        appointments: {
-          ...state.appointments,
-          [action.id]: {
-            ...state.appointments[action.id],
-            interview: {
-              ...action.interview
-            }
-          },
-        }
-      };
-    }
+      SET_INTERVIEW: () => {
+        return {
+          ...state,
+          appointments: {
+            ...state.appointments,
+            [action.id]: {
+              ...state.appointments[action.id],
+              interview: {
+                ...action.interview
+              }
+            },
+          }
+        };
+      },
 
-    case INCREASE_DAYS_SPOTS: {
-      const dayID = getDayIDFromName(state, state.day);
-      const dayObj = {
-        ...state.days[dayID],
-        spots: state.days[dayID].spots + 1,
-      };
+      INCREASE_DAYS_SPOTS: () => {
+        const dayID = getDayIDFromName(state, state.day);
+        const dayObj = {
+          ...state.days[dayID],
+          spots: state.days[dayID].spots + 1,
+        };
+  
+        const daysArray = [...state.days];
+        daysArray[dayID] = dayObj;
+  
+        return {
+          ...state,
+          days: daysArray,
+        };
+      },
 
-      const daysArray = [...state.days];
-      daysArray[dayID] = dayObj;
+      DECREASE_DAYS_SPOTS: () => {
+        const dayID = getDayIDFromName(state, state.day);
+        const dayObj = {
+          ...state.days[dayID],
+          spots: state.days[dayID].spots - 1,
+        };
+  
+        const daysArray = [...state.days];
+        daysArray[dayID] = dayObj;
+  
+        return {
+          ...state,
+          days: daysArray,
+        };
+      },
 
-      return {
-        ...state,
-        days: daysArray,
-      };
-    }
+      default:() => {
+        throw new Error(
+          `Tried to reduce with unsupported action type: ${action.type}`
+        );
+      },
+    };
 
-    case DECREASE_DAYS_SPOTS: {
-      const dayID = getDayIDFromName(state, state.day);
-      const dayObj = {
-        ...state.days[dayID],
-        spots: state.days[dayID].spots - 1,
-      };
-
-      const daysArray = [...state.days];
-      daysArray[dayID] = dayObj;
-
-      return {
-        ...state,
-        days: daysArray,
-      };
-    }
-
-    default:
-      throw new Error(
-        `Tried to reduce with unsupported action type: ${action.type}`
-      );
-    }
+    return actions[action.type]() || actions.default();
   };
 
   const [state, dispatch] = useReducer(reducer, {
