@@ -33,6 +33,12 @@
     ],
     "no-undef": "warn",
     "no-unused-vars": "off",
+    "no-trailing-spaces": [
+      "warn",
+      {
+        "skipBlankLines": true
+      }
+    ],
     //
     // [lighthouse rules]
     //
@@ -56,12 +62,6 @@
     ],
     "space-before-blocks": "error",
     "keyword-spacing": "error",
-    "no-trailing-spaces": [
-      "error",
-      {
-        "skipBlankLines": true
-      }
-    ],
     "semi-spacing": "error",
     "space-infix-ops": "error",
     "space-in-parens": "error",
