@@ -9,6 +9,7 @@ import {getDayIDFromName} from "helpers/selectors";
 const SET_DAY = "SET_DAY";
 const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
 const SET_INTERVIEW = "SET_INTERVIEW";
+const INCREASE_DAYS_SPOTS = "INCREASE_DAYS_SPOTS";
 const DECREASE_DAYS_SPOTS = "DECREASE_DAYS_SPOTS";
 
 export default function useApplicationData(initial) {
@@ -31,15 +32,6 @@ export default function useApplicationData(initial) {
       };
 
     case SET_INTERVIEW: {
-      const dayID = getDayIDFromName(state, state.day);
-      const dayObj = {
-        ...state.days[dayID],
-        spots: state.days[dayID].spots - 1,
-      };
-
-      const daysArray = [...state.days];
-      daysArray[dayID] = dayObj;
-
       return {
         ...state,
         appointments: {
@@ -50,7 +42,22 @@ export default function useApplicationData(initial) {
               ...action.interview
             }
           },
-        },
+        }
+      };
+    }
+
+    case INCREASE_DAYS_SPOTS: {
+      const dayID = getDayIDFromName(state, state.day);
+      const dayObj = {
+        ...state.days[dayID],
+        spots: state.days[dayID].spots + 1,
+      };
+
+      const daysArray = [...state.days];
+      daysArray[dayID] = dayObj;
+
+      return {
+        ...state,
         days: daysArray,
       };
     }
@@ -59,7 +66,7 @@ export default function useApplicationData(initial) {
       const dayID = getDayIDFromName(state, state.day);
       const dayObj = {
         ...state.days[dayID],
-        spots: state.days[dayID].spots + 1,
+        spots: state.days[dayID].spots - 1,
       };
 
       const daysArray = [...state.days];
@@ -117,11 +124,11 @@ export default function useApplicationData(initial) {
       return axios.put(`/api/appointments/${id}`, appointment)
         .then(
           dispatch({ type: SET_INTERVIEW, id, interview })
-        );
+        ).then(dispatch({ type: DECREASE_DAYS_SPOTS }));
     },
 
     cancelInterview: (id) => axios
       .delete(`/api/appointments/${id}`)
-      .then(dispatch({ type: DECREASE_DAYS_SPOTS })),
+      .then(dispatch({ type: INCREASE_DAYS_SPOTS })),
   };
 }
