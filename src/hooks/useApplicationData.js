@@ -127,6 +127,17 @@ export default function useApplicationData(initial) {
         ).then(dispatch({ type: DECREASE_DAYS_SPOTS }));
     },
 
+    editInterview: (id, interview) => {
+      const appointment = {
+        ...state.appointments[id],
+        interview: { ...interview }
+      };
+      return axios.put(`/api/appointments/${id}`, appointment)
+        .then(
+          dispatch({ type: SET_INTERVIEW, id, interview })
+        );
+    },
+
     cancelInterview: (id) => axios
       .delete(`/api/appointments/${id}`)
       .then(dispatch({ type: INCREASE_DAYS_SPOTS })),
