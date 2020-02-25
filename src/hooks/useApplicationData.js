@@ -12,9 +12,12 @@ const SET_INTERVIEW = "SET_INTERVIEW";
 const INCREASE_DAYS_SPOTS = "INCREASE_DAYS_SPOTS";
 const DECREASE_DAYS_SPOTS = "DECREASE_DAYS_SPOTS";
 
+//TODO Consider moving reducer here
+
 export default function useApplicationData(initial) {
 
   const reducer = (state, action) => {
+    //TODO Consider moving those files to another file (helpers)
     const actions = {
       SET_DAY: () => {
         return {
