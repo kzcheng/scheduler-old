@@ -5,7 +5,8 @@ Interview Scheduler is a modern client application using the React view library.
 Created as practice.
 
 ## Screenshots
-
+![Screenshot](https://github.com/kzcheng/scheduler/blob/master/docs/Screenshot1.png)
+![Screenshot](https://github.com/kzcheng/scheduler/blob/master/docs/Screenshot2.png)
 
 ## Setup
 
